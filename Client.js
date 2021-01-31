@@ -2,7 +2,7 @@
     const request = require('request');
     const crypto = require('crypto');
     const OAuth = require('oauth-1.0a');
-    const util = require('utils.js');
+    const util = require('./lib/utils.js');
     const Root = require('./lib/Root.js');
     const Baseline = require('./lib/Baseline.js');
     const Countries = require('./lib/Countries.js');
@@ -46,9 +46,31 @@
         this.requestTokenURL = this.options.requestTokenURL ||
             'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r%20profile_w%20address_r%20address_w%20listings_r%20listings_w';
         this.accessTokenURL = this.options.accessTokenURL || 'https://openapi.etsy.com/v2/oauth/access_token'
-        this.listings = new Listings(this);
-        this.shops = new Shops(this);
-        this.api = new API(this);
+        this.root = Root(this);
+        this.baseline = Baseline(this);
+        this.countries = Countries(this);
+        this.featuredTreasuries = FeaturedTreasuries(this);
+        this.guests = Guests(this);
+        this.imageTypes = ImageTypes(this);
+        this.listings = Listings(this);
+        this.pagesSignup = PagesSignup(this);
+        this.pages = Pages(this);
+        this.payments = Payments(this);
+        this.privateBaseline = PrivateBaseline(this);
+        this.propertyOptions = PropertyOptions(this);
+        this.propertySets = PropertySets(this);
+        this.receipts = Receipts(this);
+        this.regions = Regions(this);
+        this.server = Server(this);
+        this.shipping = Shipping(this);
+        this.shops = Shops(this);
+        this.taxonomy = Taxonomy(this);
+        this.teams = Teams(this);
+        this.transactions = Transactions(this);
+        this.treasuries = Treasuries(this);
+        this.types = Types(this);
+        this.users = Users(this);
+
     }
 
     Client.prototype.auth = function (token, secret) {
@@ -92,14 +114,14 @@
         let reqConfig = {
             uri: uri,
             method: 'GET'
-        }, (err, response, body) => {
-            callback(response, body, callback)
         };
          if ((this.authenticatedToken != null) && (this.authenticatedSecret != null)) {
              //todo
          }
 
-        this.request(reqConfig);
+        this.request(reqConfig,function (err, response, body) {
+            callback(response, body, callback)
+        });
     };
 
     Client.prototype.putOrPost = function (method, path, params) {

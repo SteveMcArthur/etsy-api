@@ -1,0 +1,13 @@
+env: DB=postgres
+language: node_js
+before_install: "npm i -g npm@6.14.5 && npm install"
+script: "npm test"
+node_js:
+  - 12.13.0
+cache:
+  directories:
+    - node_modules
+notifications:
+  email:
+    recipients:
+      - contact@stevemcarthur.co.uk
