@@ -28,7 +28,6 @@
     const Types = require('./lib/Types.js');
     const Users = require('./lib/Users.js');
 
-
     function hash_function_sha1(base_string, key) {
         return crypto
             .createHmac('sha1', key)
