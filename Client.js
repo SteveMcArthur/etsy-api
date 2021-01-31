@@ -46,30 +46,31 @@
         this.requestTokenURL = this.options.requestTokenURL ||
             'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r%20profile_w%20address_r%20address_w%20listings_r%20listings_w';
         this.accessTokenURL = this.options.accessTokenURL || 'https://openapi.etsy.com/v2/oauth/access_token'
-        this.root = Root(this);
-        this.baseline = Baseline(this);
-        this.countries = Countries(this);
-        this.featuredTreasuries = FeaturedTreasuries(this);
-        this.guests = Guests(this);
-        this.imageTypes = ImageTypes(this);
-        this.listings = Listings(this);
-        this.pagesSignup = PagesSignup(this);
-        this.pages = Pages(this);
-        this.payments = Payments(this);
-        this.privateBaseline = PrivateBaseline(this);
-        this.propertyOptions = PropertyOptions(this);
-        this.propertySets = PropertySets(this);
-        this.receipts = Receipts(this);
-        this.regions = Regions(this);
-        this.server = Server(this);
-        this.shipping = Shipping(this);
-        this.shops = Shops(this);
-        this.taxonomy = Taxonomy(this);
-        this.teams = Teams(this);
-        this.transactions = Transactions(this);
-        this.treasuries = Treasuries(this);
-        this.types = Types(this);
-        this.users = Users(this);
+        this.root = new Root(this);
+        this.baseline = new Baseline(this);
+        this.countries = new Countries(this);
+        this.featuredTreasuries = new FeaturedTreasuries(this);
+        this.guests = new Guests(this);
+        this.imageTypes = new ImageTypes(this);
+        this.listings = new Listings(this);
+        this.pagesSignup = new PagesSignup(this);
+        this.pages = new Pages(this);
+        this.payments = new Payments(this);
+        this.privateBaseline = new PrivateBaseline(this);
+        this.propertyOptions = new PropertyOptions(this);
+        this.propertySets = new PropertySets(this);
+        this.receipts = new Receipts(this);
+        this.regions = new Regions(this);
+        this.server = new Server(this);
+        this.shipping = new Shipping(this);
+        this.shops = new Shops(this);
+        this.taxonomy = new Taxonomy(this);
+        this.teams = new Teams(this);
+        this.transactions = new Transactions(this);
+        this.treasuries = new Treasuries(this);
+        this.types = new Types(this);
+        this.users = new Users(this);
+        this.request = request;
 
     }
 
@@ -106,6 +107,8 @@
         console.dir("API URL is " + _url + " ");
         return _url.toString();
     };
+
+
 
     Client.prototype.get = function (path, params, callback) {
 
@@ -164,40 +167,6 @@
     }
 
 
-
-    Client.prototype.getAuthenticated = function (path, params, callback) {
-        let uri = this.buildUrl(path, params);
-        let self = this;
-        this.etsyOAuth.get(uri, this.authenticatedToken, this.authenticatedSecret, function (err, data, res) {
-            if (err) {
-                callback(err);
-            }
-            self.handleResponse(response, data, callback);
-        })
-    };
-
-    Client.prototype.getUnauthenticated = function (path, params, callback) {
-
-        let uri = this.buildUrl(path, params);
-        let self = this;
-        this.request({
-            uri: uri,
-            method: 'GET'
-        }, (err, response, body) => {
-            self.handleResponse(response, body, callback)
-        });
-    };
-
-    Client.prototype.get = function (path, params, callback) {
-
-        if ((this.authenticatedToken != null) && (this.authenticatedSecret != null)) {
-            this.getAuthenticated(path, params, callback);
-        } else {
-            this.getUnauthenticated(path, params, callback);
-        }
-    };
-
-
     Client.prototype.put = function (path, params) {
         let url = this.buildUrl(path);
         this.putOrPost('PUT', path, params);
@@ -206,22 +175,6 @@
 
         this.putOrPost('POST', path, params);
     }
-
-    Client.prototype.put = function (path, params, callback) {
-
-        let url = this.buildUrl(path);
-        let self = this;
-        //delete params.listing_id;
-        //let content = JSON.stringify(params);
-        //let content = 'title: "'+params.title+'"';
-        this.etsyOAuth.put(url, this.authenticatedToken, this.authenticatedSecret, params, function (err, data,
-        res) {
-            if (err) {
-                callback(err);
-            }
-            self.handleResponse(res, data, callback);
-        });
-    };
 
     Client.prototype.requestToken = function (callback) {
         this.etsyOAuth.getOAuthRequestToken(function (err, oauth_token, oauth_token_secret, login_url) {
