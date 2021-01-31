@@ -2,7 +2,7 @@
     const request = require('request');
     const crypto = require('crypto');
     const OAuth = require('oauth-1.0a');
-    const util = require('./lib/utils.js');
+    const util = require('./lib/Utils.js');
     const Root = require('./lib/Root.js');
     const Baseline = require('./lib/Baseline.js');
     const Countries = require('./lib/Countries.js');
@@ -27,6 +27,7 @@
     const Treasuries = require('./lib/Treasuries.js');
     const Types = require('./lib/Types.js');
     const Users = require('./lib/Users.js');
+
 
     function hash_function_sha1(base_string, key) {
         return crypto
