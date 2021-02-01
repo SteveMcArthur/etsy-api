@@ -123,7 +123,7 @@
          }
 
         this.request(reqConfig,function (err, response, body) {
-            callback(response, body, callback)
+            callback(err,response.status, body)
         });
     };
 
