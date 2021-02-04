@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start-test": "node ./test/request-tests.js",
-    "test": "mocha test"
+    "test": "mocha ./tests/index.js"
   },
   "repository": {
     "type": "git",

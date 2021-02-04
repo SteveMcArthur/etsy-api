@@ -1,8 +1,8 @@
 
     const request = require('request');
     const crypto = require('crypto');
-    const OAuth = require('oauth-1.0a');
-    const util = require('./lib/Utils.js');
+    const utils = require('./lib/utils');
+    const Signature = require('./lib/utils/signature.js');
     const Root = require('./lib/Root.js');
     const Baseline = require('./lib/Baseline.js');
     const Countries = require('./lib/Countries.js');
@@ -42,6 +42,8 @@
         this.options = options;
         this.apiKey = this.options.key;
         this.apiSecret = this.options.secret;
+        this.authenticatedToken = this.options.authToken;
+        this.authenticatedSecret = this.options.authSecret;
         this.callbackURL = this.options.callbackURL;
         this.requestTokenURL = this.options.requestTokenURL ||
             'https://openapi.etsy.com/v2/oauth/request_token?scope=email_r%20profile_r%20profile_w%20address_r%20address_w%20listings_r%20listings_w';
@@ -71,6 +73,7 @@
         this.types = new Types(this);
         this.users = new Users(this);
         this.request = request;
+        this.signature = new Signature(this);
 
     }
 
@@ -129,31 +132,14 @@
 
     Client.prototype.putOrPost = function (method, path, params) {
 
-        let url = this.buildUrl(path);
-        const oauth = OAuth({
-            consumer: {
-                key: this.apiKey,
-                secret: this.consumerSecret,
-            },
-            signature_method: 'HMAC-SHA1',
-            hash_function: hash_function_sha1
-        });
+       let url = this.buildUrl(path).trim();
 
-        const request_data = {
-            url: url,
-            method: method,
-            data: params,
-        }
-
-        const token = {
-            key: this.authenticatedToken,
-            secret: this.authenticatedSecret,
-        }
+        let formData = this.signature.getFormData(method,url,params)
 
         request({
-                url: request_data.url,
-                method: request_data.method,
-                form: oauth.authorize(request_data, token),
+                url: url,
+                method: method,
+                form: formData
             },
             function (err, response, body) {
                 if (err) {
